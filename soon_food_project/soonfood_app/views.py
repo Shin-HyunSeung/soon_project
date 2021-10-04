@@ -3,4 +3,4 @@ from django.http import HttpResponse
 
 # Create your views here.
 def index(requset):
-    return HttpResponse('hi') awdkawdkl
+    return HttpResponse('hi')
