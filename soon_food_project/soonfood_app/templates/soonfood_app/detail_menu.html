@@ -1,0 +1,51 @@
+{% load static %}
+<html lang="ko">
+    <style>
+        .main_contents{
+            width: 100%;
+            height: auto;
+            margin-top: 80px;
+        }
+        .left_contents{
+            width: 30%;
+            float: left;
+            /* height: 700px; */
+            margin-left: 170px;
+        }
+
+        .right_contetns{
+            width: 70%;
+            float: right;
+            height: 700px;
+        }
+        .sug_food_name{
+            margin-top: 20px;
+        }
+        .footer_{
+            margin-top: 50px;
+        }
+        
+    </style>
+    <head>
+        <meta charset="utf-8">
+        {% include 'head.html' %} 
+    </head>
+    <body> 
+        <div class="main_contents">
+            <div class="left_contents">
+                {% include 'menu.html' %}
+            </div>
+            <div class="right_contents">
+                {% include 'read_map.html' %}
+            </div>
+        </div>
+
+        <div class="footer_">
+            {% include 'footer.html' %}
+        </div>
+        
+
+    </body> 
+    
+</html>
+

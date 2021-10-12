@@ -1,0 +1,45 @@
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Boot strap -->
+    <!-- 합쳐지고 최소화된 최신 CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <!-- 부가적인 테마 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+    <link rel="stylesheet" href="/static/bootstrap.min.css"/>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    {% load static %}
+    
+
+    <title>순천 맛집 추천</title>
+</head>
+<body>
+    <div class="container1">
+        <div class="header">
+            <div class="jumbotron1">
+                <h1 class="title_text">{{ get_res }} 메뉴판</h1>
+            </div>
+        </div>
+    </div>
+    <div class="menu_lst">
+        <hr class="one">
+        <div class="str_info">
+            <div class="food_name">
+                <form action="select_food" method="get" id="select_food1">
+                    <h2 class = "foodlst_name" id="foodlst_name" name="foodlst_name"> 별점 : {{ get_object.score }} </h2>
+                    {% for price in price_list %}
+                    <hr>
+                    <h4> {{ price }} </h4>
+                    {% endfor %}
+                </form>
+            </div>
+            
+        </div>
+    </div>
+    
+    
+</body>
+</html>

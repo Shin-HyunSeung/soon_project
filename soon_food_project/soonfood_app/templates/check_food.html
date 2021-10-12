@@ -1,0 +1,15 @@
+<style>
+    .res_info{
+        margin-top: 20px;
+    }
+
+</style>
+{% for res in get_res %}
+<div class="res_info">
+    <h1 class = "foodlst_name" id="foodlst_name" name="foodlst_name"> {{res.restaurant}} </h1>
+    <li> 평점 : {{res.score}} </li>
+    <li> {{res.categori}} </li>
+    <li> 메인메뉴 : {{res.sig_menu}} </li>
+    <li> {{res.tell}} </li> 
+</div>
+{% endfor %}  

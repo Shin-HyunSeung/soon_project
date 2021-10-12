@@ -1,0 +1,93 @@
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Boot strap -->
+    <!-- 합쳐지고 최소화된 최신 CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <!-- 부가적인 테마 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+    <link rel="stylesheet" href="/static/bootstrap.min.css"/>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    {% load static %}
+    <style>
+
+        strong {
+            font-weight: bold;
+            font-size: 25px;
+            text-align: center;
+        }
+        .con_gird {
+            display: grid;
+            grid-template-columns: 500px 500px;
+            grid-template-rows: 300px 300px 300px;
+            align-items: center; /* 수직 가운데 정렬 */
+            justify-content: center;
+        }
+        .btm_image{
+            background-color: wheat;
+            /* width: 50%; */
+        }
+        
+        .con_rows {
+            text-align: center;
+        }
+        .btn_info {
+            width: 200px;
+            height: auto;
+            margin-top: 10px;
+        }
+        .btm_image {
+            border-radius: 10px;
+        }
+        .check_food_lst{
+            float: right;
+            margin-top: -80px;
+        }
+        .top_btn {
+            background-color: wheat;
+            border-radius: 10px;
+            box-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+        }
+        
+    </style>
+
+    <title>순천 {{get_cat}} 추천</title>
+</head>
+<body>
+    <form action="check_food/" method="get">
+        {% csrf_token %}
+        {% for ob in select_cate_list %}
+        <div class="food_lst">
+            <hr class="one">
+            <div class="str_info">
+                <div class="left_info">
+                    <h1 class = "foodlst_name" id="foodlst_name" name="foodlst_name"> {{ob.restaurant}} </h1>
+                    <li> 평점 : {{ob.score}} </li>
+                    <li> {{ob.categori}} </li>
+                    <li> 메인메뉴 : {{ob.sig_menu}} </li>
+                    <li> {{ob.tell}} </li>  
+                    <div class="btn_info">
+                        <button type="button" class="btm_image" id="img_btn_select" onclick="location.href='menu?cat={{get_cat}}?res={{ob.restaurant}}'"> 메뉴보기 </button>
+                        <button type="button" class="btm_image" id="img_btn_map" onclick="location.href='select_detail/?={{ob.restaurant}}'"> 유사 음식점 </button>
+                    </div>
+                </div>
+                <div class="right_info">
+                    <fieldset class="check_food_lst">
+                        <input type="checkbox" id="chk_info" name="chk_info" value="{{ob.restaurant}}">
+                        <label>선택</label>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <hr>
+        
+        
+        <input type="submit" class="top_btn" id="img_btn_ja" name="img_btn_ja" value="음식점 선택완료">
+        
+    </form>
+    
+</body>
+</html>
