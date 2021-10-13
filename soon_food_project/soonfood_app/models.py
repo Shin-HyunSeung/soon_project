@@ -24,3 +24,6 @@ class tourlist(models.Model):
     address = models.CharField(max_length = 50)
     lat = models.FloatField(max_length = 20)
     long = models.FloatField(max_length = 20)
+
+class check_select_food(models.Model):
+    restaurant = models.CharField(max_length = 20)

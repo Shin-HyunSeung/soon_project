@@ -1,18 +1,29 @@
 {% load static %}
 <html lang="ko">
     <style>
+        .main_content{
+            /* align-items: center; */
+            /* align-content: center; */
+            text-align: center;
+        }
         .main_intro{
             margin-top: 50px;
         }
-        h4 {
+        h3 {
             color: black;
-            margin-left: 180px;
+            /* margin-left: 50px; */
             /* text-shadow: -0.1px 0 black, 0 0.1px black, 0.1px 0 black, 0 -0.1px black;  */
         }
         .random_contents {
+            /* text-align: center; */
             display: grid;
-            grid-template-columns: 400px 400px 400px;
-            margin-left: 100px;
+            /* grid-template-columns: 400px 400px 400px; */
+            grid-template-columns: auto auto auto;
+            /* margin-left: 40px; */
+            /* text-align: center; */
+            /* margin-left: 100px; */
+            /* margin-left: auto; */
+            /* align-content: center; */
         }
         .food_lst_img {
             width: 350px;
@@ -27,18 +38,16 @@
             margin-bottom: 10px;
 
         }
-        .food_lst{
-            margin-left: 85px;
-            /* border-style: solid; */
-            /* border-color: rgb(243, 239, 3); */
-        }
+        
         h5 {
             color: grey;
-            margin-left: 105px; 
-            width: 500px;
+            /* margin-left: 105px;  */
+            /* width: 500px; */
         }
         .local_food{
-            margin-left: 585px;
+            text-align: center;
+            /* margin-left: 585px; */
+            /* margin-left: 670px; */
         }
     
     </style>
@@ -46,46 +55,49 @@
         {% include 'head.html' %} 
     </head>
     <body> 
-        <div class="main_intro">
-            <h4>카테고리별 음식점 추천받기!</h4>
-            <hr>
-        </div>
-        <div class="random_contents">
-            <div class="food_lst">
-                <a href="/random_choice?cate=한식"><img src="{% static '한식.jpg'%}" class="food_lst_img">
-                    <h5>한식집 추천받기!</h5>
+        <div class="main_content">
+            <div class="main_intro">
+                <h3>카테고리별 음식점 추천받기!</h3>
+                <hr>
+            </div>
+            <div class="main_content"></div>
+            <div class="random_contents">
+                <div class="food_lst1">
+                    <a href="/random_choice?cate=한식"><img src="{% static '한식.jpg'%}" class="food_lst_img">
+                        <h5>한식집 추천받기!</h5>
+                    </a>
+                </div>
+                <div class="food_lst2">
+                    <a href="/random_choice?cate=중식"><img src="{% static '중식.jpg'%}" class="food_lst_img">
+                        <h5>중식집 추천받기!</h5>
+                    </a>
+                </div>
+                <div class="food_lst3">
+                    <a href="/random_choice?cate=일식"><img src="{% static '일식.jpg'%}" class="food_lst_img">
+                        <h5>일식집 추천받기!</h5>
+                    </a>
+                </div>
+                <div class="food_lst4">
+                    <a href="/random_choice?cate=양식"><img src="{% static '양식3.jpg'%}" class="food_lst_img1">
+                        <h5>양식집 추천받기!</h5>
+                    </a>
+                </div>
+                <div class="food_lst5">
+                    <a href="/random_choice?cate=카페"><img src="{% static '카페.jpg'%}" class="food_lst_img1">
+                        <h5>카페 추천받기!</h5>
+                    </a>
+                </div>
+                <div class="food_lst6">
+                    <a href="/random_choice?cate=주점"><img src="{% static '주점.jpg'%}" class="food_lst_img1">
+                        <h5>주점 추천받기!</h5>
+                    </a>
+                </div>
+            </div>
+            <div class="local_food">
+                <a href="/random_choice?cate=향토음식"><img src="{% static '향토음식.jpg'%}" class="food_lst_img1">
+                    <h5>향토음식 추천받기!</h5>
                 </a>
             </div>
-            <div class="food_lst">
-                <a href="/random_choice?cate=중식"><img src="{% static '중식.jpg'%}" class="food_lst_img">
-                    <h5>중식집 추천받기!</h5>
-                </a>
-            </div>
-            <div class="food_lst">
-                <a href="/random_choice?cate=일식"><img src="{% static '일식.jpg'%}" class="food_lst_img">
-                    <h5>일식집 추천받기!</h5>
-                </a>
-            </div>
-            <div class="food_lst">
-                <a href="/random_choice?cate=양식"><img src="{% static '양식3.jpg'%}" class="food_lst_img1">
-                    <h5>양식집 추천받기!</h5>
-                </a>
-            </div>
-            <div class="food_lst">
-                <a href="/random_choice?cate=카페"><img src="{% static '카페.jpg'%}" class="food_lst_img1">
-                    <h5>카페 추천받기!</h5>
-                </a>
-            </div>
-            <div class="food_lst">
-                <a href="/random_choice?cate=주점"><img src="{% static '주점.jpg'%}" class="food_lst_img1">
-                    <h5>주점 추천받기!</h5>
-                </a>
-            </div>
-        </div>
-        <div class="local_food">
-            <a href="/random_choice?cate=향토음식"><img src="{% static '향토음식.jpg'%}" class="food_lst_img1">
-                <h5>향토음식 추천받기!</h5>
-            </a>
         </div>
         <hr>
     </body> 

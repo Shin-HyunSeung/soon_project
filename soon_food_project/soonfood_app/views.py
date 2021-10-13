@@ -121,105 +121,106 @@ def random_cate(request):
     
     sug_food = res_data.iloc[similar_indexes]
     sug_food_name = []
-    # sug_food_menu = []
     sug_food_sig = []
+    # [sug_food_name.append(sug_food['식당명'][i]) for i in range(len(sug_food['식당명']))]
     [sug_food_name.append(name) for name in sug_food['식당명']]
-    # [sug_food_menu.append(menu) for menu in sug_food['메뉴']]
     [sug_food_sig.append(sig) for sig in sug_food['대표메뉴']]
-    return render(request, 'soonfood_app/random_cate_base.html', {'get_cat' : get_cat, 'ran_food':ran_food,'data_tours_address':data_tours_address,'data_tours_res':data_tours_res,'data_tours_lat':data_tours_lat,'data_tours_long':data_tours_long,'sug_food_name_1':sug_food_name[1],'sug_food_name_2':sug_food_name[2],'sug_food_name_3':sug_food_name[3],'sug_food_sig_1':sug_food_sig[1],'sug_food_sig_2':sug_food_sig[2],'sug_food_sig_3':sug_food_sig[3]})
+
+    
+    return render(request, 'soonfood_app/random_cate_base.html', {'get_cat' : get_cat,'all_obs':all_obs, 'ran_food':ran_food,'data_tours_address':data_tours_address,'data_tours_res':data_tours_res,'data_tours_lat':data_tours_lat,'data_tours_long':data_tours_long,'sug_food_name':sug_food_name[1:],'sug_food_sig':sug_food_sig[1:]})
 
 def search_food_btn(request):
-    all_obs = soon_food.objects.all()
-    all_tours = tourlist.objects.all()
-    search_contetns = request.GET.get('main_search')
+    try:
+        all_obs = soon_food.objects.all()
+        all_tours = tourlist.objects.all()
+        search_contetns = request.GET.get('main_search')
+        
+        select_food = soon_food.objects.filter(restaurant = search_contetns)[0]
+        tours_res = []
+        tours_lat = []
+        tours_long = []
+        tours_address = []
+        tours_real_address = []
+        obs_address = []
+        haver_list=[]
+
+        [tours_res.append(str(tour.restaurant)) for tour in all_tours] # 관광지 이름 데이터
+        [tours_lat.append(str(tour.lat)) for tour in all_tours] # 관광지 위도 데이터
+        [tours_long.append(str(tour.long)) for tour in all_tours] #관광지 경도 데이터
+        [tours_address.append([tour.lat, tour.long]) for tour in all_tours] #관광지 위도 경도 데이터
+        [tours_real_address.append(str(tour.address)) for tour in all_tours] #관광지 경도 데이터
+
+        obs_address.append(select_food.lat)
+        obs_address.append(select_food.long)
+        # print(select_food[0].restaurant)
+
+        [haver_list.append(haversine(obs_address, tours, unit='km')) for tours in tours_address]
+        tours_data = pd.DataFrame({
+            '관광지':tours_res,
+            '위도':tours_lat,
+            '경도':tours_long,
+            '사이거리':haver_list,
+            '주소':tours_real_address
+        })
+        tours_data_5 = tours_data[tours_data['사이거리'] < 5]
+
+        data_tours_res = [i for i in tours_data_5['관광지']]
+        data_tours_lat = [i for i in tours_data_5['위도']]
+        data_tours_long = [i for i in tours_data_5['경도']]
+        data_tours_address = [i for i in tours_data_5['주소']]
+
+
+        res_name = []
+        res_menu = []
+        res_sig_menu = []
+        [res_name.append(obs.restaurant) for obs in all_obs]
+        [res_menu.append(obs.menu) for obs in all_obs]
+        [res_sig_menu.append(obs.sig_menu) for obs in all_obs]
+        res_data = pd.DataFrame({
+            '식당명':res_name,
+            '메뉴':res_menu,
+            '대표메뉴':res_sig_menu
+        })
+        
+
+        # 시그니처 메뉴 텍스트 데이터 간의 텍스트 피쳐 벡터라이징
+        count_vect_sig_menu = CountVectorizer(min_df=2, ngram_range=(1,2))
+        place_sig_menu = count_vect_sig_menu.fit_transform(res_data['대표메뉴']) 
+        # 시그니처 메뉴 텍스트 간의 코사인 유사도 따지기
+        place_simi_sig_menu = cosine_similarity(place_sig_menu, place_sig_menu) 
+        place_simi_sig_menu_sorted_ind = place_simi_sig_menu.argsort()[:, ::-1]
+
+        # 메뉴 텍스트 데이터 간의 텍스트 피쳐 벡터라이징
+        count_vect_menu = CountVectorizer(min_df=2, ngram_range=(1,2))
+        place_menu = count_vect_menu.fit_transform(res_data['메뉴']) 
+        # 메뉴 텍스트 간의 코사인 유사도 따지기
+        place_simi_menu = cosine_similarity(place_menu, place_menu)
+        place_simi_menu_sorted_ind = place_simi_menu.argsort()[:, ::-1]
+
+        place_simi_co = (
+            + place_simi_sig_menu * 0.3 # 공식 1. 시그니처 메뉴 유사도
+            + place_simi_menu * 0.7 # 공식 2. 메뉴 텍스트 유사도
+        )
+        place_simi_co_sorted_ind = place_simi_co.argsort()[:, ::-1] 
+
+        place_title = res_data[res_data['식당명'] == select_food.restaurant]
+        place_index = place_title.index.values
+        similar_indexes = place_simi_co_sorted_ind[place_index, :(4)]
+        similar_indexes = similar_indexes.reshape(-1)
+        
+        sug_food = res_data.iloc[similar_indexes]
+        sug_food_name = []
+        sug_food_sig = []
+        [sug_food_name.append(name) for name in sug_food['식당명']]
+        [sug_food_sig.append(sig) for sig in sug_food['대표메뉴']]
+
+        return render(request, 'soonfood_app/random_cate_base.html', {'ran_food':select_food,'all_obs':all_obs,'data_tours_address':data_tours_address, 'data_tours_res':data_tours_res,'data_tours_lat':data_tours_lat,'data_tours_long':data_tours_long,'sug_food_name':sug_food_name[1:],'sug_food_sig':sug_food_sig[1:]})
+
+    except:
+        return HttpResponse('일치하는 식당이 없습니다.')
     
-    select_food = soon_food.objects.filter(restaurant = search_contetns)[0]
-    tours_res = []
-    tours_lat = []
-    tours_long = []
-    tours_address = []
-    tours_real_address = []
-    obs_address = []
-    haver_list=[]
-
-    [tours_res.append(str(tour.restaurant)) for tour in all_tours] # 관광지 이름 데이터
-    [tours_lat.append(str(tour.lat)) for tour in all_tours] # 관광지 위도 데이터
-    [tours_long.append(str(tour.long)) for tour in all_tours] #관광지 경도 데이터
-    [tours_address.append([tour.lat, tour.long]) for tour in all_tours] #관광지 위도 경도 데이터
-    [tours_real_address.append(str(tour.address)) for tour in all_tours] #관광지 경도 데이터
-
-    obs_address.append(select_food.lat)
-    obs_address.append(select_food.long)
-    # print(select_food[0].restaurant)
-
-    [haver_list.append(haversine(obs_address, tours, unit='km')) for tours in tours_address]
-    tours_data = pd.DataFrame({
-        '관광지':tours_res,
-        '위도':tours_lat,
-        '경도':tours_long,
-        '사이거리':haver_list,
-        '주소':tours_real_address
-    })
-    tours_data_5 = tours_data[tours_data['사이거리'] < 5]
-
-    data_tours_res = [i for i in tours_data_5['관광지']]
-    data_tours_lat = [i for i in tours_data_5['위도']]
-    data_tours_long = [i for i in tours_data_5['경도']]
-    data_tours_address = [i for i in tours_data_5['주소']]
-
-
-    res_name = []
-    res_menu = []
-    res_sig_menu = []
-    [res_name.append(obs.restaurant) for obs in all_obs]
-    [res_menu.append(obs.menu) for obs in all_obs]
-    [res_sig_menu.append(obs.sig_menu) for obs in all_obs]
-    res_data = pd.DataFrame({
-        '식당명':res_name,
-        '메뉴':res_menu,
-        '대표메뉴':res_sig_menu
-    })
-    
-
-    # 시그니처 메뉴 텍스트 데이터 간의 텍스트 피쳐 벡터라이징
-    count_vect_sig_menu = CountVectorizer(min_df=2, ngram_range=(1,2))
-    place_sig_menu = count_vect_sig_menu.fit_transform(res_data['대표메뉴']) 
-    # 시그니처 메뉴 텍스트 간의 코사인 유사도 따지기
-    place_simi_sig_menu = cosine_similarity(place_sig_menu, place_sig_menu) 
-    place_simi_sig_menu_sorted_ind = place_simi_sig_menu.argsort()[:, ::-1]
-
-    # 메뉴 텍스트 데이터 간의 텍스트 피쳐 벡터라이징
-    count_vect_menu = CountVectorizer(min_df=2, ngram_range=(1,2))
-    place_menu = count_vect_menu.fit_transform(res_data['메뉴']) 
-    # 메뉴 텍스트 간의 코사인 유사도 따지기
-    place_simi_menu = cosine_similarity(place_menu, place_menu)
-    place_simi_menu_sorted_ind = place_simi_menu.argsort()[:, ::-1]
-
-    place_simi_co = (
-        + place_simi_sig_menu * 0.3 # 공식 1. 시그니처 메뉴 유사도
-        + place_simi_menu * 0.7 # 공식 2. 메뉴 텍스트 유사도
-    )
-    place_simi_co_sorted_ind = place_simi_co.argsort()[:, ::-1] 
-
-    place_title = res_data[res_data['식당명'] == select_food.restaurant]
-    place_index = place_title.index.values
-    similar_indexes = place_simi_co_sorted_ind[place_index, :(4)]
-    similar_indexes = similar_indexes.reshape(-1)
-    
-    sug_food = res_data.iloc[similar_indexes]
-    sug_food_name = []
-    # sug_food_menu = []
-    sug_food_sig = []
-    [sug_food_name.append(name) for name in sug_food['식당명']]
-    # [sug_food_menu.append(menu) for menu in sug_food['메뉴']]
-    [sug_food_sig.append(sig) for sig in sug_food['대표메뉴']]
-    # print(similar_indexes)
-    # print(place_simi_co)
-
-    return render(request, 'soonfood_app/random_cate_base.html', {'ran_food':select_food,'data_tours_address':data_tours_address, 'data_tours_res':data_tours_res,'data_tours_lat':data_tours_lat,'data_tours_long':data_tours_long,'sug_food_name_1':sug_food_name[1],'sug_food_name_2':sug_food_name[2],'sug_food_name_3':sug_food_name[3],'sug_food_sig_1':sug_food_sig[1],'sug_food_sig_2':sug_food_sig[2],'sug_food_sig_3':sug_food_sig[3],'sug_food_name':sug_food_name,'sug_food_sig':sug_food_sig})
 
 def detail_content(request):
-
     get_res = request.get_full_path()
     get_res = get_res.split('select_detail/?=')[1]
     get_res = unquote_plus(get_res)
@@ -307,7 +308,7 @@ def detail_content(request):
     [sug_food_sig.append(sig) for sig in sug_food['대표메뉴']]
     # print(place_simi_co)
 
-    return render(request, 'soonfood_app/random_cate_base.html', {'ran_food':select_food, 'data_tours_address':data_tours_address,'data_tours_res':data_tours_res,'data_tours_lat':data_tours_lat,'data_tours_long':data_tours_long,'sug_food_name_1':sug_food_name[1],'sug_food_name_2':sug_food_name[2],'sug_food_name_3':sug_food_name[3],'sug_food_sig_1':sug_food_sig[1],'sug_food_sig_2':sug_food_sig[2],'sug_food_sig_3':sug_food_sig[3],'sug_food_name':sug_food_name,'sug_food_sig':sug_food_sig})
+    return render(request, 'soonfood_app/random_cate_base.html', {'ran_food':select_food, 'all_obs':all_obs,'data_tours_address':data_tours_address,'data_tours_res':data_tours_res,'data_tours_lat':data_tours_lat,'data_tours_long':data_tours_long,'sug_food_name':sug_food_name[1:],'sug_food_sig':sug_food_sig[1:]})
 
 def menu_lst(request):
     all_obs = soon_food.objects.all()
@@ -449,7 +450,16 @@ def check_food(request):
     [str_select_res_long.append(str(i)) for i in select_res_long]
     return render(request, 'soonfood_app/check_food_info.html', {'median_lat':median_lat,'data_tours_address':data_tours_address,'get_res':select_res_info, 'median_long':median_long, 'data_tours_res':data_tours_res, 'data_tours_lat':data_tours_lat, 'data_tours_long':data_tours_long,'select_res1':select_res[0],'select_res2':select_res[1],'select_res_lat':str_select_res_lat,'select_res_long':str_select_res_long,'select_res':select_res})
 
-def select_food(request):
-    select_food = request.GET.get('select_food_btn')
-    print(select_food)
-    return render(request, 'soonfood_app/base.html')
+# def select_food(request):
+#     hidden_food1 = request.GET.get('hidden_name')
+#     new_res = check_select_food(restaurant = hidden_food1)
+#     new_res.save()
+#     real_res = check_select_food.objects.all()
+#     # real_res.delete()
+#     print(real_res[0])
+#     return render(request, 'soonfood_app/base.html',{'real_res':real_res})
+
+# def final_check(request):
+#     check1 = request.GET.get('hidden_name')
+#     print(check1)
+#     return HttpResponse('hihi')

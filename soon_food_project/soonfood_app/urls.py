@@ -18,13 +18,14 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.index),
+    path('', views.index, name='index'),
     path('food/', views.food),
     path('df_btn/', views.df_btn_click),
     path('food/df_btn/', views.df_btn_click),
     path('random_choice/', views.random_cate),
     path('search_food/', views.search_food_btn),
     path('random_choice/select_detail/', views.detail_content),
+    path('random_choice/select_detail/select_detail/', views.detail_content),
     path('search_food/select_detail/', views.detail_content),
     path('food/menu/', views.menu_lst),
     path('food/check_food/', views.check_food),
@@ -32,9 +33,13 @@ urlpatterns = [
     path('random_choice/select_detail/menu/', views.menu_lst),
     path('food/select_detail/', views.detail_content),
     path('search_food/menu/', views.menu_lst),
-    path('random_choice/select_food/', views.select_food),
-    path('random_choice/select_food_btn/', views.select_food),
-    path('/select_food_btn/', views.select_food)
+    # path('random_choice/select_food/', views.select_food),
+    # path('random_choice/select_food_btn/', views.select_food),
+    # path('/select_food_btn/', views.select_food),
+    # path('random_choice/select_food_btn/chk_food/', views.final_check),
+    # path('random_choice/select_food_btn/', views.final_check),
+    # path('random_choice/select_food/', views.final_check),
+
 
 
 

@@ -4,13 +4,15 @@
 <style>
     .container{
         margin-top: 20px;
+        min-width: 100%;
+        
         /* text-align: center; */
         background-image: url("{% static 'main4.jpg' %}");
-        height: 60vh;
+        height: 80vh;
         background-repeat : no-repeat;
         background-size : cover;
         line-height: normal;
-        text-align: center;
+        /* text-align: center; */
     }
     .header_header{
         width: 1000px;
@@ -23,29 +25,15 @@
     }
     .menu_list{
         /* display: grid; */
-        float: right;
+        /* float: right; */
         margin-left: 20px;
         /* line-height: 75px; */
-    }
-    .header_menu{
-        float: left;
-        
     }
     .header_menu {
         display: inline-block;
         float: right;
         margin-left: 30px;
         font-size: 20px;
-        /* font-style: italic; */
-        /* font-color: #f1f4f8; */
-        /* text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;  */
-        /* background-color:transparent; */
-        /* padding-top:200px;
-        padding-bottom:15px;
-        font-style: italic;
-        background-color:transparent;
-        color: #f1f4f8;
-        text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black; */
     }
     .food_cate {
         text-shadow: -0.5px 0 black, 0 0.5px black, 0.5px 0 black, 0 -0.5px black; 
@@ -53,7 +41,7 @@
         font-family: 'Courier New', Courier, monospace;
     }
     .bot_content{
-        margin-top: 100px;
+        margin-top: 170px;
     }
     .title{
         text-align: center;
@@ -97,7 +85,7 @@
             <fieldset class="main_search">
                 <label class="search_word" for="main_search" style="padding: 10;">
                     <input id="main_search" class="HomeSearchInput" name="main_search"  
-                    type="text" maxlength="50" placeholder="식당명 검색" autocomplete="off" onclick="trackEvent('CLICK_SEARCH_MAIN')"
+                    type="text" maxlength="50" placeholder="식당명 검색" autocomplete="off" onclick="trackEvent('CLICK_SEARCH_MAIN')">
                 </label>
                 <input class="btn_search" type="submit" value="검색" onclick="location.href='/search_food?sch={{ keyword }}'">
 

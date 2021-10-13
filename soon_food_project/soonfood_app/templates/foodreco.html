@@ -4,35 +4,48 @@
         margin-top: 5px;
     }
 </style>
-<form action="select_food_btn/" method="get">
+<form action="select_food_btn/" method="get">{% csrf_token %}
     <h3 class = "foodlst_name" id="foodlst_name" name="foodlst_name"> {{ran_food.restaurant}} </h3>
+    <input type="hidden" name="hidden_name" id="hidden_name" value="{{ran_food.restaurant}}"> 
     <li> 평점 : {{ran_food.score}} </li>
     <li> {{ran_food.categori}} </li>
     <li> 메인메뉴 : {{ran_food.sig_menu}} </li>
     <li> {{ran_food.tell}} </li> 
     <li> {{ran_food.address}} </li>
     <input type="button" class="top_btn1" value="메뉴보기" onclick="location.href='menu/?res={{ran_food.restaurant}}'">
-    <input type="button" class="top_btn1" name="select_food_btn" value="선택" onclick="location.href='select_food/'">
+    <!-- <input type="submit" class="top_btn1" name="select_food_btn" value="선택" onclick="location.href='select_food/'"> -->
 </form>
 <div class="low_contents">
     <hr class="class_hr">
     <h4>유사 음식점 추천!</h4>
-    <div class="contents">
+    {% for obs in all_obs %}
+    {% for name in sug_food_name %}
+    {% if obs.restaurant == name %}
+    
+    
+    <form action="select_detail/" method="get">
+        <div class="contents">
+            <h4 class="sug_food_name">{{obs.restaurant}}</h4>
+            <h6>대표메뉴 : {{obs.sig_menu}}</h6>
+            <input type="button" class="top_btn" value="상세보기" onclick="location.href='select_detail?={{obs.restaurant}}'">
+        </div>
+    </form>
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+    <!-- <div class="contents">
         <h4 class="sug_food_name">{{sug_food_name_1}}</h4>
         <h6>대표메뉴 : {{sug_food_sig_1}}</h6>
         <input type="button" class="top_btn" value="상세보기" onclick="location.href='select_detail?={{sug_food_name_1}}'">
-        <!-- <input type="hidden" id="img_btn_ja1" name="img_btn_ja1" value="{{sug_food_name_1}}"> -->
     </div>
     <div class="contents">
         <h4 class="sug_food_name">{{sug_food_name_2}}</h4>
         <h6>대표메뉴 : {{sug_food_sig_2}}</h6>
         <input type="button" class="top_btn" value="상세보기" onclick="location.href='select_detail?={{sug_food_name_2}}'">
-        <!-- <input type="hidden" id="img_btn_ja2" name="img_btn_ja2" value="{{sug_food_name_2}}"> -->
     </div>
     <div class="contents">
         <h4 class="sug_food_name">{{sug_food_name_3}}</h4>
         <h6>대표메뉴 : {{sug_food_sig_3}}</h6>
         <input type="button" class="top_btn" value="상세보기" onclick="location.href='select_detail?={{sug_food_name_3}}'">
-        <!-- <input type="hidden" id="img_btn_ja2" name="img_btn_ja2" value="{{sug_food_name_3}}"> -->
-    </div>
+    </div> -->
 </div>
